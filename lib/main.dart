@@ -6,28 +6,22 @@ import 'package:html/dom.dart' as DOM;
 const joyURL = 'http://joyreactor.cc';
 
 void main() async {
-  var posts = await initiate();
+  var joyPage = await initiate();
   runApp(MyApp(
-    posts: posts
+    joyPage: joyPage
   ));
 }
 
-Future<List<JoyPost>> initiate() async {
-  // Make API call to Hackernews homepage
+Future<JoyPage> initiate() async {
   var client = Client();
   Response response = await client.get(joyURL);
-
-  // Use html parser
-  var document = parse(response.body);
-  List<DOM.Element> posts = document.querySelectorAll('.postContainer');
-
-  return posts.map((postContainer) => JoyPost(postContainer)).toList();
+  return JoyPage(parse(response.body));
 }
 
 class MyApp extends StatelessWidget {
-  final List<JoyPost> posts;
+  final JoyPage joyPage;
 
-  MyApp({Key key, @required this.posts}) : super(key: key);
+  MyApp({Key key, @required this.joyPage}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,19 +34,19 @@ class MyApp extends StatelessWidget {
           title: Text(title),
         ),
         body: ListView.builder(
-          itemCount: posts.length,
+          itemCount: joyPage.posts.length,
           itemBuilder: (context, postIndex) {
             List<Widget> children = [
                 Icon(
                   Icons.star,
                   color: Colors.red[500],
                 ),
-                Text(posts[postIndex].rating)
+                Text(joyPage.posts[postIndex].rating)
               ];
 
             // new Row(children: posts[postIndex].tags.map((tag) => Chip(label: new Text(tag.title))).toList());
-            children.add(new Row(children: posts[postIndex].tags.map((tag) => Chip(label: new Text(tag.title))).toList()));
-            children.addAll(posts[postIndex].images.map((img) => Image.network(img)).toList());
+            children.add(new Row(children: joyPage.posts[postIndex].tags.map((tag) => Chip(label: new Text(tag.title))).toList()));
+            children.addAll(joyPage.posts[postIndex].images.map((img) => Image.network(img)).toList());
 
             return Column(
 
@@ -92,14 +86,14 @@ class JoyPage {
   static const postsSelector = '.postContainer';
 
   final DOM.Element nextButtonElement;
-  final Iterable<JoyPost> posts;
+  final List<JoyPost> posts;
 
   String get nextPageUrl => joyURL + nextButtonElement.attributes['ref'];
   String get allURL => '$joyURL/all';
   String get goodURL => '$joyURL/';
   String get bestURL => '$joyURL/best';
 
-  JoyPage(DOM.Element rootElement) :
+  JoyPage(DOM.Document rootElement) :
     nextButtonElement = rootElement.querySelector(nextPageSelector),
     posts = rootElement.querySelectorAll(postsSelector).map((postContainer) => JoyPost(postContainer)).toList();
 }
