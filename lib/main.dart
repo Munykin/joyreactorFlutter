@@ -29,31 +29,72 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: title,
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text(title),
-        ),
-        body: ListView.builder(
-          itemCount: joyPage.posts.length,
-          itemBuilder: (context, postIndex) {
-            List<Widget> children = [
-                Icon(
-                  Icons.star,
-                  color: Colors.red[500],
+      home: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.new_releases)),
+                Tab(icon: Icon(Icons.linked_camera)),
+                Tab(icon: Icon(Icons.thumb_up)),
+              ],
+            ),
+            title: Text('JoyReactor'),
+          ),
+          body: TabBarView(
+            children: [
+              Scaffold(
+                body: ListView.builder(
+                  itemCount: joyPage.posts.length,
+                  itemBuilder: (context, postIndex) {
+                    List<Widget> children = [
+                        Icon(
+                          Icons.star,
+                          color: Colors.red[500],
+                        ),
+                        Text(joyPage.posts[postIndex].rating)
+                      ];
+
+                    // new Row(children: posts[postIndex].tags.map((tag) => Chip(label: new Text(tag.title))).toList());
+                    children.add(new Row(children: joyPage.posts[postIndex].tags.map((tag) => Chip(label: new Text(tag.title))).toList()));
+                    children.addAll(joyPage.posts[postIndex].images.map((img) => Image.network(img)).toList());
+
+                    return Column(
+
+                        children: children
+
+                    );
+                  },
                 ),
-                Text(joyPage.posts[postIndex].rating)
-              ];
+              ),
+              Scaffold(
+                body: ListView.builder(
+                  itemCount: joyPage.posts.length,
+                  itemBuilder: (context, postIndex) {
+                    List<Widget> children = [
+                        Icon(
+                          Icons.star,
+                          color: Colors.red[500],
+                        ),
+                        Text(joyPage.posts[postIndex].rating)
+                      ];
 
-            // new Row(children: posts[postIndex].tags.map((tag) => Chip(label: new Text(tag.title))).toList());
-            children.add(new Row(children: joyPage.posts[postIndex].tags.map((tag) => Chip(label: new Text(tag.title))).toList()));
-            children.addAll(joyPage.posts[postIndex].images.map((img) => Image.network(img)).toList());
+                    // new Row(children: posts[postIndex].tags.map((tag) => Chip(label: new Text(tag.title))).toList());
+                    children.add(new Row(children: joyPage.posts[postIndex].tags.map((tag) => Chip(label: new Text(tag.title))).toList()));
+                    children.addAll(joyPage.posts[postIndex].images.map((img) => Image.network(img)).toList());
 
-            return Column(
+                    return Column(
 
-                children: children
+                        children: children
 
-            );
-          },
+                    );
+                  },
+                ),
+              ),
+              Icon(Icons.directions_bike),
+            ],
+          ),
         ),
       ),
     );
