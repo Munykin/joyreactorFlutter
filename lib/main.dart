@@ -5,7 +5,6 @@ import 'package:html/parser.dart';
 import 'core/global/global.dart';
 import 'models/page.dart';
 import 'widgets/page.dart';
-import 'widgets/post.dart';
 
 
 void main() async {
